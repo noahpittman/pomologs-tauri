@@ -21,14 +21,11 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			<body
-				className={
-					(poppins.className,
-					"container max-w-screen-sm px-4 text-center space-y-4")
-				}
-			>
-				<Navbar />
-				{children}
+			<body className={poppins.className}>
+				<main className="container max-w-screen-sm px-4 text-center space-y-4">
+					<Navbar />
+					{children}
+				</main>
 				<Toaster position="bottom-center" />
 			</body>
 		</html>
