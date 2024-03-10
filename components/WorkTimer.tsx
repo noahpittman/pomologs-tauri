@@ -276,11 +276,7 @@ const WorkTimer = () => {
 								<CardDescription>
 									{new Date(log.date).toLocaleDateString()}
 									<br />
-									{Math.floor(log.timeSpent / 60)
-										.toString()
-										.padStart(2, "0")}
-									:{(log.timeSpent % 60).toString().padStart(2, "0")} spent
-									working
+									{formatTime(log.timeSpent)} spent working
 								</CardDescription>
 							</CardHeader>
 							<CardContent>
