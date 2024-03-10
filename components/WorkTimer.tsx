@@ -285,6 +285,7 @@ const WorkTimer = () => {
 						</Card>
 					))}
 			</div>
+
 			<Dialog
 				open={timer.finished && log.goal.trim() !== "" && !timer.isRunning}
 			>
