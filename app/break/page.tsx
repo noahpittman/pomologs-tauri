@@ -1,9 +1,9 @@
-import { WorkTimer } from "@/components/WorkTimer";
+import { BreakTimer } from "@/components/BreakTimer";
 
 const Page = () => {
 	return (
 		<>
-			<WorkTimer />
+			<BreakTimer />
 		</>
 	);
 };
