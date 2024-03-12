@@ -176,7 +176,7 @@ const WorkTimer = () => {
 		} else {
 			document.title = "PomoLogs - Deep Work Tracker";
 		}
-	}, [timer.isRunning]);
+	}, [timer.isRunning, timer.time]);
 
 	return (
 		<div className="space-y-4">
