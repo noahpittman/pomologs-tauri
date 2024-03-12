@@ -143,17 +143,17 @@ const WorkTimer = () => {
 	const countLogsByDate = () => {
 		const dateCounts: any[] = [];
 		logs.forEach((log) => {
-			const logDate = new Date(log.date)
-				.toISOString()
-				.split("T")[0]
-				.replace(/-/g, "/");
+			const logDate = new Date(log.date);
+			const logDateString = `${logDate.getFullYear()}/${
+				logDate.getMonth() + 1
+			}/${logDate.getDate()}`;
 			const existingDate = dateCounts.find(
-				(dateCount) => dateCount.date === logDate
+				(dateCount) => dateCount.date === logDateString
 			);
 			if (existingDate) {
 				existingDate.count += 1;
 			} else {
-				dateCounts.push({ date: logDate, count: 1 });
+				dateCounts.push({ date: logDateString, count: 1 });
 			}
 		});
 		return dateCounts;
@@ -299,9 +299,13 @@ const WorkTimer = () => {
 						className="select-none w-full mx-auto"
 						space={1.1}
 						startDate={
-							new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
+							new Date(
+								new Date().getUTCFullYear(),
+								new Date().getUTCMonth() - 1,
+								1
+							)
 						}
-						endDate={new Date(new Date().getFullYear(), 11, 31)}
+						endDate={new Date(new Date().getUTCFullYear(), 11, 31)}
 						repeatCount={1}
 						rectProps={{ rx: 2 }}
 						legendCellSize={5}
@@ -353,11 +357,11 @@ const WorkTimer = () => {
 								<AccordionContent className="grid gap-4">
 									{logs
 										.filter((log) => {
-											const logDate = new Date(log.date)
-												.toISOString()
-												.split("T")[0]
-												.replace(/-/g, "/");
-											return logDate === dateCount.date;
+											const logDate = new Date(log.date);
+											const logDateString = `${logDate.getFullYear()}/${
+												logDate.getMonth() + 1
+											}/${logDate.getDate()}`;
+											return logDateString === dateCount.date;
 										})
 										.map((log, i) => (
 											<>
@@ -365,10 +369,12 @@ const WorkTimer = () => {
 													<CardHeader>
 														<CardTitle>{log.goal}</CardTitle>
 														<CardDescription>
-															{new Date(log.date).toLocaleTimeString([], {
-																hour: "2-digit",
-																minute: "2-digit",
-															})}
+															<span className="font-medium underline">
+																{new Date(log.date).toLocaleTimeString([], {
+																	hour: "2-digit",
+																	minute: "2-digit",
+																})}
+															</span>
 															<br />
 															{formatTime(log.timeSpent)} spent working
 														</CardDescription>
