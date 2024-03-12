@@ -20,6 +20,19 @@ import {
 import { motion } from "framer-motion";
 import { formatTime } from "@/lib/utils";
 import HeatMap, { HeatMapValue } from "@uiw/react-heat-map";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "./ui/accordion";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "./ui/select";
 
 interface TimerProps {
 	time: number;
@@ -45,6 +58,9 @@ interface LogProps {
 const WorkTimer = () => {
 	const requestRef = useRef<number>();
 	const [initialTime, setInitialTime] = useState<number>(25 * 60);
+	const [sort, setSort] = useState<"Most Recent" | "Oldest First">(
+		"Most Recent"
+	);
 	// timer state
 	const [timer, setTimer] = useState<TimerProps>({
 		type: "work",
@@ -124,29 +140,29 @@ const WorkTimer = () => {
 		}
 	};
 
+	const countLogsByDate = () => {
+		const dateCounts: any[] = [];
+		logs.forEach((log) => {
+			const logDate = new Date(log.date)
+				.toISOString()
+				.split("T")[0]
+				.replace(/-/g, "/");
+			const existingDate = dateCounts.find(
+				(dateCount) => dateCount.date === logDate
+			);
+			if (existingDate) {
+				existingDate.count += 1;
+			} else {
+				dateCounts.push({ date: logDate, count: 1 });
+			}
+		});
+		return dateCounts;
+	};
+
 	// each time logs is updated, save it to local storage
 	useEffect(() => {
 		if (logs.length === 0) return;
 		localStorage.setItem("logs", JSON.stringify(logs));
-
-		const countLogsByDate = () => {
-			const dateCounts: any[] = [];
-			logs.forEach((log) => {
-				const logDate = new Date(log.date)
-					.toISOString()
-					.split("T")[0]
-					.replace(/-/g, "/");
-				const existingDate = dateCounts.find(
-					(dateCount) => dateCount.date === logDate
-				);
-				if (existingDate) {
-					existingDate.count += 1;
-				} else {
-					dateCounts.push({ date: logDate, count: 1 });
-				}
-			});
-			return dateCounts;
-		};
 
 		setHeatmapValues(countLogsByDate());
 	}, [logs]);
@@ -308,26 +324,65 @@ const WorkTimer = () => {
 					/>
 				</div>
 
-				{logs.length > 0 &&
-					logs
+				<Select
+					onValueChange={(value: "Most Recent" | "Oldest First") =>
+						setSort(value)
+					}
+					defaultValue="Most Recent"
+					value={sort}
+				>
+					<SelectTrigger className="w-[180px]">
+						<SelectValue placeholder="Sort by: " />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="Most Recent">Most Recent</SelectItem>
+						<SelectItem value="Oldest First">Oldest First</SelectItem>
+					</SelectContent>
+				</Select>
+
+				<Accordion type="single" collapsible>
+					{countLogsByDate()
 						.sort((a, b) => {
-							return new Date(b.date).getTime() - new Date(a.date).getTime();
+							return sort === "Most Recent"
+								? b.date.localeCompare(a.date)
+								: a.date.localeCompare(b.date);
 						})
-						.map((log, i = 1) => (
-							<Card key={i} className="mt-4">
-								<CardHeader>
-									<CardTitle>{log.goal}</CardTitle>
-									<CardDescription>
-										{new Date(log.date).toLocaleDateString()}
-										<br />
-										{formatTime(log.timeSpent)} spent working
-									</CardDescription>
-								</CardHeader>
-								<CardContent>
-									<p>{log.notes}</p>
-								</CardContent>
-							</Card>
+						.map((dateCount) => (
+							<AccordionItem key={dateCount.date} value={dateCount.date}>
+								<AccordionTrigger>{dateCount.date}</AccordionTrigger>
+								<AccordionContent className="grid gap-4">
+									{logs
+										.filter((log) => {
+											const logDate = new Date(log.date)
+												.toISOString()
+												.split("T")[0]
+												.replace(/-/g, "/");
+											return logDate === dateCount.date;
+										})
+										.map((log, i) => (
+											<>
+												<Card key={i}>
+													<CardHeader>
+														<CardTitle>{log.goal}</CardTitle>
+														<CardDescription>
+															{new Date(log.date).toLocaleTimeString([], {
+																hour: "2-digit",
+																minute: "2-digit",
+															})}
+															<br />
+															{formatTime(log.timeSpent)} spent working
+														</CardDescription>
+													</CardHeader>
+													<CardContent>
+														<p>{log.notes}</p>
+													</CardContent>
+												</Card>
+											</>
+										))}
+								</AccordionContent>
+							</AccordionItem>
 						))}
+				</Accordion>
 			</div>
 
 			<Dialog
