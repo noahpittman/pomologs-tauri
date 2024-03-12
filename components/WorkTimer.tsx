@@ -348,8 +348,8 @@ const WorkTimer = () => {
 					{countLogsByDate()
 						.sort((a, b) => {
 							return sort === "Most Recent"
-								? b.date.localeCompare(a.date)
-								: a.date.localeCompare(b.date);
+								? new Date(b.date).getTime() - new Date(a.date).getTime()
+								: new Date(a.date).getTime() - new Date(b.date).getTime();
 						})
 						.map((dateCount) => (
 							<AccordionItem key={dateCount.date} value={dateCount.date}>
