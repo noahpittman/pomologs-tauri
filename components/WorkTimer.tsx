@@ -48,13 +48,6 @@ interface LogProps {
 	date: Date;
 }
 
-// TODO: add pause functionality (better left to an external library.)
-// TODO: add themes
-
-// DONE: github style calendar for tracking
-// TODO: LOGS ACCORDION
-// TODO: && detailed logs on a separate page
-
 const WorkTimer = () => {
 	const requestRef = useRef<number>();
 	const [initialTime, setInitialTime] = useState<number>(25 * 60);
