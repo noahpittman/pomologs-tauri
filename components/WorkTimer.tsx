@@ -363,6 +363,10 @@ const WorkTimer = () => {
 											}/${logDate.getDate()}`;
 											return logDateString === dateCount.date;
 										})
+										.sort(
+											(a, b) =>
+												new Date(b.date).getTime() - new Date(a.date).getTime()
+										)
 										.map((log, i) => (
 											<>
 												<Card key={i}>
