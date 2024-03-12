@@ -284,7 +284,7 @@ const WorkTimer = () => {
 					</form>
 				</CardContent>
 			</Card>
-			<div className="space-y-4">
+			<div className="space-y-4 pb-48">
 				<div className="select-none">
 					<p className="text-sm text-muted-foreground">Logs</p>
 					<HeatMap
